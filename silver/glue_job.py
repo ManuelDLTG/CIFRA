@@ -30,8 +30,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import (
     StructType, StructField,
-    StringType, DoubleType, TimestampType,
-    IntegerType, ArrayType
+    StringType, IntegerType, ArrayType
 )
 
 # Importar parser local
@@ -54,45 +53,44 @@ CONCEPTO_SCHEMA = StructType([
     StructField("clave_unidad",    StringType()),
     StructField("unidad",          StringType()),
     StructField("descripcion",     StringType()),
-    StructField("valor_unitario",  DoubleType()),
-    StructField("importe",         DoubleType()),
-    StructField("descuento",       DoubleType()),
+    StructField("valor_unitario",  StringType()),
+    StructField("importe",         StringType()),
+    StructField("descuento",       StringType()),
     StructField("objeto_imp",      StringType()),
 ])
 
 SILVER_SCHEMA = StructType([
-    StructField("version",          StringType()),
-    StructField("serie",            StringType()),
-    StructField("folio",            StringType()),
-    StructField("fecha_emision",    TimestampType()),
-    StructField("subtotal",         DoubleType()),
-    StructField("descuento",        DoubleType()),
-    StructField("total",            DoubleType()),
-    StructField("moneda",           StringType()),
-    StructField("tipo_cambio",      DoubleType()),
-    StructField("tipo_comprobante", StringType()),
-    StructField("metodo_pago",      StringType()),
-    StructField("forma_pago",       StringType()),
-    StructField("lugar_expedicion", StringType()),
-    StructField("exportacion",      StringType()),
-    StructField("no_certificado",   StringType()),
-    StructField("rfc_emisor",       StringType()),
-    StructField("nombre_emisor",    StringType()),
-    StructField("regimen_fiscal",   StringType()),
+    StructField("version",                    StringType()),
+    StructField("serie",                      StringType()),
+    StructField("folio",                      StringType()),
+    StructField("fecha_emision",              StringType()),
+    StructField("subtotal",                   StringType()),
+    StructField("descuento",                  StringType()),
+    StructField("total",                      StringType()),
+    StructField("moneda",                     StringType()),
+    StructField("tipo_cambio",                StringType()),
+    StructField("tipo_comprobante",           StringType()),
+    StructField("metodo_pago",                StringType()),
+    StructField("forma_pago",                 StringType()),
+    StructField("lugar_expedicion",           StringType()),
+    StructField("exportacion",                StringType()),
+    StructField("no_certificado",             StringType()),
+    StructField("rfc_emisor",                 StringType()),
+    StructField("nombre_emisor",              StringType()),
+    StructField("regimen_fiscal",             StringType()),
     StructField("rfc_receptor",               StringType()),
     StructField("nombre_receptor",            StringType()),
     StructField("domicilio_fiscal_receptor",  StringType()),
     StructField("regimen_fiscal_receptor",    StringType()),
     StructField("uso_cfdi",                   StringType()),
-    StructField("uuid",               StringType()),
-    StructField("fecha_timbrado",     TimestampType()),
-    StructField("rfc_prov_certif",    StringType()),
-    StructField("no_certificado_sat", StringType()),
-    StructField("iva_trasladado", DoubleType()),
-    StructField("isr_retenido",   DoubleType()),
-    StructField("conceptos", ArrayType(CONCEPTO_SCHEMA)),
-    StructField("year",  IntegerType()),
-    StructField("month", IntegerType()),
+    StructField("uuid",                       StringType()),
+    StructField("fecha_timbrado",             StringType()),
+    StructField("rfc_prov_certif",            StringType()),
+    StructField("no_certificado_sat",         StringType()),
+    StructField("iva_trasladado",             StringType()),
+    StructField("isr_retenido",               StringType()),
+    StructField("year",                       IntegerType()),
+    StructField("month",                      IntegerType()),
 ])
 
 
@@ -101,24 +99,20 @@ SILVER_SCHEMA = StructType([
 # ---------------------------------------------------------------------------
 
 def _to_row(parsed: dict) -> dict:
-    """Convierte Decimal a float para DoubleType de Spark."""
+    """Convierte todos los campos a string para compatibilidad con Athena."""
     row = dict(parsed)
-    decimal_fields = [
-        "subtotal", "descuento", "total", "tipo_cambio",
-        "iva_trasladado", "isr_retenido",
-    ]
-    for field in decimal_fields:
-        val = row.get(field)
-        row[field] = float(val) if val is not None else None
 
-    conceptos = []
-    for c in row.get("conceptos", []):
-        c2 = dict(c)
-        for f in ["valor_unitario", "importe", "descuento"]:
-            v = c2.get(f)
-            c2[f] = float(v) if v is not None else None
-        conceptos.append(c2)
-    row["conceptos"] = conceptos
+    for field in ["subtotal", "descuento", "total", "tipo_cambio",
+                  "iva_trasladado", "isr_retenido"]:
+        val = row.get(field)
+        row[field] = str(val) if val is not None else None
+
+    for field in ["fecha_emision", "fecha_timbrado"]:
+        val = row.get(field)
+        row[field] = val.isoformat() if val is not None else None
+
+    row.pop("conceptos", None)
+
     return row
 
 
