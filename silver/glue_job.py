@@ -35,8 +35,12 @@ from pyspark.sql.types import (
 )
 
 # Importar parser local
-sys.path.insert(0, "/tmp/cifra")
-from silver.parser import parse_cfdi
+# En Glue, los módulos de --extra-py-files quedan en la raíz del PYTHONPATH
+# sin estructura de paquete — se importan directamente por nombre de archivo
+try:
+    from parser import parse_cfdi          # cuando viene de glue_libs.zip
+except ImportError:
+    from silver.parser import parse_cfdi   # ejecución local
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -187,7 +191,10 @@ def run():
 
     def process_key(key):
         import boto3
-        from silver.parser import parse_cfdi
+        try:
+            from parser import parse_cfdi
+        except ImportError:
+            from silver.parser import parse_cfdi
         s3_local = boto3.client("s3")
         try:
             resp = s3_local.get_object(Bucket=bucket, Key=key)
