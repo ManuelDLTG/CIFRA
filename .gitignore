@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+venv/
+.venv/
+env/
+
+# Environment
+.env
+*.env.local
+
+# AWS
+.aws/
+*.pem
+
+# Data (no subir XMLs reales ni Parquet al repo)
+data/sample_cfdis/*.xml
+data/sample_cfdis/*.parquet
+data/sample_cfdis/*.json
+!data/sample_cfdis/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# SageMaker
+model.tar.gz
+output/
