@@ -30,8 +30,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import (
     StructType, StructField,
-    StringType, DecimalType, TimestampType,
-    IntegerType, ArrayType, MapType
+    StringType, DoubleType, TimestampType,
+    IntegerType, ArrayType
 )
 
 # Importar parser local
@@ -54,50 +54,43 @@ CONCEPTO_SCHEMA = StructType([
     StructField("clave_unidad",    StringType()),
     StructField("unidad",          StringType()),
     StructField("descripcion",     StringType()),
-    StructField("valor_unitario",  DecimalType(18, 6)),
-    StructField("importe",         DecimalType(18, 6)),
-    StructField("descuento",       DecimalType(18, 6)),
+    StructField("valor_unitario",  DoubleType()),
+    StructField("importe",         DoubleType()),
+    StructField("descuento",       DoubleType()),
     StructField("objeto_imp",      StringType()),
 ])
 
 SILVER_SCHEMA = StructType([
-    # Comprobante
     StructField("version",          StringType()),
     StructField("serie",            StringType()),
     StructField("folio",            StringType()),
     StructField("fecha_emision",    TimestampType()),
-    StructField("subtotal",         DecimalType(18, 6)),
-    StructField("descuento",        DecimalType(18, 6)),
-    StructField("total",            DecimalType(18, 6)),
+    StructField("subtotal",         DoubleType()),
+    StructField("descuento",        DoubleType()),
+    StructField("total",            DoubleType()),
     StructField("moneda",           StringType()),
-    StructField("tipo_cambio",      DecimalType(18, 6)),
+    StructField("tipo_cambio",      DoubleType()),
     StructField("tipo_comprobante", StringType()),
     StructField("metodo_pago",      StringType()),
     StructField("forma_pago",       StringType()),
     StructField("lugar_expedicion", StringType()),
     StructField("exportacion",      StringType()),
     StructField("no_certificado",   StringType()),
-    # Emisor
     StructField("rfc_emisor",       StringType()),
     StructField("nombre_emisor",    StringType()),
     StructField("regimen_fiscal",   StringType()),
-    # Receptor
     StructField("rfc_receptor",               StringType()),
     StructField("nombre_receptor",            StringType()),
     StructField("domicilio_fiscal_receptor",  StringType()),
     StructField("regimen_fiscal_receptor",    StringType()),
     StructField("uso_cfdi",                   StringType()),
-    # Timbre
     StructField("uuid",               StringType()),
     StructField("fecha_timbrado",     TimestampType()),
     StructField("rfc_prov_certif",    StringType()),
     StructField("no_certificado_sat", StringType()),
-    # Impuestos
-    StructField("iva_trasladado", DecimalType(18, 6)),
-    StructField("isr_retenido",   DecimalType(18, 6)),
-    # Conceptos (array)
+    StructField("iva_trasladado", DoubleType()),
+    StructField("isr_retenido",   DoubleType()),
     StructField("conceptos", ArrayType(CONCEPTO_SCHEMA)),
-    # Particiones
     StructField("year",  IntegerType()),
     StructField("month", IntegerType()),
 ])
@@ -108,35 +101,24 @@ SILVER_SCHEMA = StructType([
 # ---------------------------------------------------------------------------
 
 def _to_row(parsed: dict) -> dict:
-    """Convierte el dict del parser a tipos compatibles con Spark.
-    Spark 3.3 requiere Decimal (no float) para DecimalType.
-    """
-    from decimal import Decimal
+    """Convierte Decimal a float para DoubleType de Spark."""
     row = dict(parsed)
-
     decimal_fields = [
         "subtotal", "descuento", "total", "tipo_cambio",
         "iva_trasladado", "isr_retenido",
     ]
     for field in decimal_fields:
         val = row.get(field)
-        if val is None:
-            row[field] = None
-        elif not isinstance(val, Decimal):
-            row[field] = Decimal(str(val))
+        row[field] = float(val) if val is not None else None
 
     conceptos = []
     for c in row.get("conceptos", []):
         c2 = dict(c)
         for f in ["valor_unitario", "importe", "descuento"]:
             v = c2.get(f)
-            if v is None:
-                c2[f] = None
-            elif not isinstance(v, Decimal):
-                c2[f] = Decimal(str(v))
+            c2[f] = float(v) if v is not None else None
         conceptos.append(c2)
     row["conceptos"] = conceptos
-
     return row
 
 
