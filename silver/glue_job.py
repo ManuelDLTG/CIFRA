@@ -108,25 +108,32 @@ SILVER_SCHEMA = StructType([
 # ---------------------------------------------------------------------------
 
 def _to_row(parsed: dict) -> dict:
-    """Convierte el dict del parser a tipos compatibles con Spark."""
+    """Convierte el dict del parser a tipos compatibles con Spark.
+    Spark 3.3 requiere Decimal (no float) para DecimalType.
+    """
+    from decimal import Decimal
     row = dict(parsed)
 
-    # Decimal → float para Spark (Spark acepta float para DecimalType)
     decimal_fields = [
         "subtotal", "descuento", "total", "tipo_cambio",
         "iva_trasladado", "isr_retenido",
     ]
     for field in decimal_fields:
         val = row.get(field)
-        row[field] = float(val) if val is not None else None
+        if val is None:
+            row[field] = None
+        elif not isinstance(val, Decimal):
+            row[field] = Decimal(str(val))
 
-    # Conceptos: Decimal → float dentro de cada concepto
     conceptos = []
     for c in row.get("conceptos", []):
         c2 = dict(c)
         for f in ["valor_unitario", "importe", "descuento"]:
             v = c2.get(f)
-            c2[f] = float(v) if v is not None else None
+            if v is None:
+                c2[f] = None
+            elif not isinstance(v, Decimal):
+                c2[f] = Decimal(str(v))
         conceptos.append(c2)
     row["conceptos"] = conceptos
 
