@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+  xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+  Version="4.0"
+  Serie="C"
+  Folio="F00108874"
+  Fecha="2024-11-27T12:00:00"
+  Sello="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+  FormaPago="3"
+  NoCertificado="20001000000300022323"
+  Certificado="MIIFxTCCA62gAwIBAgIUMjAwMDEwMDAwMDAzMDAwMjMyMjMwDQYJKoZIhvcNAQEL"
+  SubTotal="6879.11"
+  Moneda="MXN"
+  Total="7979.77"
+  TipoDeComprobante="E"
+  MetodoPago="PUE"
+  LugarExpedicion="06600"
+  ExportacionMexico="01">
+
+  <cfdi:Emisor
+    Rfc="EMP010101ABC"
+    Nombre="EMPRESA DEMO ANALÍTICA SA DE CV"
+    RegimenFiscal="601"/>
+
+  <cfdi:Receptor
+    Rfc="DTXU980722LFA"
+    Nombre="Lic. Araceli Muro"
+    DomicilioFiscalReceptor="06600"
+    RegimenFiscalReceptor="626"
+    UsoCFDI="I04"/>
+
+  <cfdi:Conceptos>
+    <cfdi:Concepto
+      ClaveProdServ="86110000"
+      ClaveUnidad="E48"
+      Unidad="Servicio"
+      Descripcion="Cursos de capacitación"
+      ValorUnitario="6879.11"
+      Importe="6879.11"
+      ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado
+            Base="6879.11"
+            Impuesto="002"
+            TipoFactor="Tasa"
+            TasaOCuota="0.160000"
+            Importe="1100.66"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="1100.66">
+    
+    <cfdi:Traslados>
+      <cfdi:Traslado
+        Base="6879.11"
+        Impuesto="002"
+        TipoFactor="Tasa"
+        TasaOCuota="0.160000"
+        Importe="1100.66"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital
+      xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+      xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+      Version="1.1"
+      UUID="37D66639-CE86-4AA9-8EFD-562439684656"
+      FechaTimbrado="2024-11-27T12:00:00"
+      RfcProvCertif="SAT960114T52"
+      NoCertificadoSAT="20001000000300022815"
+      SelloCFDI="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+      SelloSAT="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3B=="/>
+  </cfdi:Complemento>
+
+</cfdi:Comprobante>

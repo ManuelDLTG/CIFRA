@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+  xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+  Version="4.0"
+  Serie="A"
+  Folio="F00003533"
+  Fecha="2025-02-17T12:00:00"
+  Sello="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+  FormaPago="3"
+  NoCertificado="20001000000300022323"
+  Certificado="MIIFxTCCA62gAwIBAgIUMjAwMDEwMDAwMDAzMDAwMjMyMjMwDQYJKoZIhvcNAQEL"
+  SubTotal="116731.68"
+  Moneda="MXN"
+  Total="135408.75"
+  TipoDeComprobante="I"
+  MetodoPago="PUE"
+  LugarExpedicion="06600"
+  ExportacionMexico="01">
+
+  <cfdi:Emisor
+    Rfc="EMP010101ABC"
+    Nombre="EMPRESA DEMO ANALÍTICA SA DE CV"
+    RegimenFiscal="601"/>
+
+  <cfdi:Receptor
+    Rfc="UYA830716AM1"
+    Nombre="Guerra, Canales y Valladares"
+    DomicilioFiscalReceptor="06600"
+    RegimenFiscalReceptor="625"
+    UsoCFDI="CN01"/>
+
+  <cfdi:Conceptos>
+    <cfdi:Concepto
+      ClaveProdServ="31020000"
+      ClaveUnidad="E48"
+      Unidad="Servicio"
+      Descripcion="Materias primas"
+      ValorUnitario="116731.68"
+      Importe="116731.68"
+      ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado
+            Base="116731.68"
+            Impuesto="002"
+            TipoFactor="Tasa"
+            TasaOCuota="0.160000"
+            Importe="18677.07"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="18677.07">
+    
+    <cfdi:Traslados>
+      <cfdi:Traslado
+        Base="116731.68"
+        Impuesto="002"
+        TipoFactor="Tasa"
+        TasaOCuota="0.160000"
+        Importe="18677.07"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital
+      xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+      xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+      Version="1.1"
+      UUID="00C000FD-BC03-4C88-98E1-592E5BA52565"
+      FechaTimbrado="2025-02-17T12:00:00"
+      RfcProvCertif="SAT960114T52"
+      NoCertificadoSAT="20001000000300022815"
+      SelloCFDI="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+      SelloSAT="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3B=="/>
+  </cfdi:Complemento>
+
+</cfdi:Comprobante>

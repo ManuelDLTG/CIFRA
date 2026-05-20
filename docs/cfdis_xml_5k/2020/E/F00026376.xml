@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+  xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+  Version="4.0"
+  Serie="A"
+  Folio="F00026376"
+  Fecha="2020-11-04T12:00:00"
+  Sello="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+  FormaPago="1"
+  NoCertificado="20001000000300022323"
+  Certificado="MIIFxTCCA62gAwIBAgIUMjAwMDEwMDAwMDAzMDAwMjMyMjMwDQYJKoZIhvcNAQEL"
+  SubTotal="10053.17"
+  Moneda="MXN"
+  Total="11661.68"
+  TipoDeComprobante="E"
+  MetodoPago="PUE"
+  LugarExpedicion="06600"
+  ExportacionMexico="01">
+
+  <cfdi:Emisor
+    Rfc="EMP010101ABC"
+    Nombre="EMPRESA DEMO ANALÍTICA SA DE CV"
+    RegimenFiscal="601"/>
+
+  <cfdi:Receptor
+    Rfc="MNX321219G3D"
+    Nombre="Sandoval-Valdés A.C."
+    DomicilioFiscalReceptor="06600"
+    RegimenFiscalReceptor="616"
+    UsoCFDI="P01"/>
+
+  <cfdi:Conceptos>
+    <cfdi:Concepto
+      ClaveProdServ="72100000"
+      ClaveUnidad="E48"
+      Unidad="Servicio"
+      Descripcion="Renta de equipo"
+      ValorUnitario="10053.17"
+      Importe="10053.17"
+      ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado
+            Base="10053.17"
+            Impuesto="002"
+            TipoFactor="Tasa"
+            TasaOCuota="0.160000"
+            Importe="1608.51"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="1608.51">
+    
+    <cfdi:Traslados>
+      <cfdi:Traslado
+        Base="10053.17"
+        Impuesto="002"
+        TipoFactor="Tasa"
+        TasaOCuota="0.160000"
+        Importe="1608.51"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital
+      xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+      xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+      Version="1.1"
+      UUID="C914A219-971C-4673-8C71-0C9D8B8EDC09"
+      FechaTimbrado="2020-11-04T12:00:00"
+      RfcProvCertif="SAT960114T52"
+      NoCertificadoSAT="20001000000300022815"
+      SelloCFDI="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+      SelloSAT="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3B=="/>
+  </cfdi:Complemento>
+
+</cfdi:Comprobante>

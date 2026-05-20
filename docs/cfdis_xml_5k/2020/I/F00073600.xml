@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+  xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+  Version="4.0"
+  Serie="D"
+  Folio="F00073600"
+  Fecha="2020-06-27T12:00:00"
+  Sello="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+  FormaPago="99"
+  NoCertificado="20001000000300022323"
+  Certificado="MIIFxTCCA62gAwIBAgIUMjAwMDEwMDAwMDAzMDAwMjMyMjMwDQYJKoZIhvcNAQEL"
+  SubTotal="10408.09"
+  Moneda="MXN"
+  Total="12073.38"
+  TipoDeComprobante="I"
+  MetodoPago="PUE"
+  LugarExpedicion="06600"
+  ExportacionMexico="01">
+
+  <cfdi:Emisor
+    Rfc="EMP010101ABC"
+    Nombre="EMPRESA DEMO ANALÍTICA SA DE CV"
+    RegimenFiscal="601"/>
+
+  <cfdi:Receptor
+    Rfc="MWH280802U8U"
+    Nombre="Arguello y Roybal S.A. de C.V."
+    DomicilioFiscalReceptor="06600"
+    RegimenFiscalReceptor="603"
+    UsoCFDI="G03"/>
+
+  <cfdi:Conceptos>
+    <cfdi:Concepto
+      ClaveProdServ="31000000"
+      ClaveUnidad="E48"
+      Unidad="Servicio"
+      Descripcion="Materias primas"
+      ValorUnitario="10408.09"
+      Importe="10408.09"
+      ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado
+            Base="10408.09"
+            Impuesto="002"
+            TipoFactor="Tasa"
+            TasaOCuota="0.160000"
+            Importe="1665.29"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="1665.29">
+    
+    <cfdi:Traslados>
+      <cfdi:Traslado
+        Base="10408.09"
+        Impuesto="002"
+        TipoFactor="Tasa"
+        TasaOCuota="0.160000"
+        Importe="1665.29"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital
+      xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+      xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+      Version="1.1"
+      UUID="D955FD15-8CF2-49EB-AE69-C21A759B60B1"
+      FechaTimbrado="2020-06-27T12:00:00"
+      RfcProvCertif="SAT960114T52"
+      NoCertificadoSAT="20001000000300022815"
+      SelloCFDI="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+      SelloSAT="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3B=="/>
+  </cfdi:Complemento>
+
+</cfdi:Comprobante>

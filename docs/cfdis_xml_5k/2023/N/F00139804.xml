@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+  xmlns:cfdi="http://www.sat.gob.mx/cfd/4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd"
+  Version="4.0"
+  Serie="D"
+  Folio="F00139804"
+  Fecha="2023-06-04T12:00:00"
+  Sello="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+  FormaPago="99"
+  NoCertificado="20001000000300022323"
+  Certificado="MIIFxTCCA62gAwIBAgIUMjAwMDEwMDAwMDAzMDAwMjMyMjMwDQYJKoZIhvcNAQEL"
+  SubTotal="16243.25"
+  Moneda="MXN"
+  Total="18842.17"
+  TipoDeComprobante="N"
+  MetodoPago="PPD"
+  LugarExpedicion="06600"
+  ExportacionMexico="01">
+
+  <cfdi:Emisor
+    Rfc="EMP010101ABC"
+    Nombre="EMPRESA DEMO ANALÍTICA SA DE CV"
+    RegimenFiscal="601"/>
+
+  <cfdi:Receptor
+    Rfc="WLGS840708JPI"
+    Nombre="Elvia Tovar"
+    DomicilioFiscalReceptor="06600"
+    RegimenFiscalReceptor="621"
+    UsoCFDI="CN01"/>
+
+  <cfdi:Conceptos>
+    <cfdi:Concepto
+      ClaveProdServ="80131501"
+      ClaveUnidad="E48"
+      Unidad="Servicio"
+      Descripcion="Administración de propiedades"
+      ValorUnitario="16243.25"
+      Importe="16243.25"
+      ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado
+            Base="16243.25"
+            Impuesto="002"
+            TipoFactor="Tasa"
+            TasaOCuota="0.160000"
+            Importe="2598.92"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+
+  <cfdi:Impuestos TotalImpuestosTrasladados="2598.92">
+    
+    <cfdi:Traslados>
+      <cfdi:Traslado
+        Base="16243.25"
+        Impuesto="002"
+        TipoFactor="Tasa"
+        TasaOCuota="0.160000"
+        Importe="2598.92"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital
+      xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+      xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd"
+      Version="1.1"
+      UUID="DF94FD83-6C3B-4B95-B447-A10AB3E14075"
+      FechaTimbrado="2023-06-04T12:00:00"
+      RfcProvCertif="SAT960114T52"
+      NoCertificadoSAT="20001000000300022815"
+      SelloCFDI="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A=="
+      SelloSAT="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3B=="/>
+  </cfdi:Complemento>
+
+</cfdi:Comprobante>
