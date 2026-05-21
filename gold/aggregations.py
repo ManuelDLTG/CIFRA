@@ -10,6 +10,7 @@ import awswrangler as wr
 import pandas as pd
 from gold.athena_queries import (
     SERIE_TEMPORAL,
+    SERIE_TEMPORAL_COMPLETA,
     TOP_CLIENTES,
     DISTRIBUCION_TIPOS,
     DISTRIBUCION_PAGO,
@@ -56,6 +57,7 @@ def build_gold():
         "distribucion_tipos":  DISTRIBUCION_TIPOS,
         "distribucion_pago":   DISTRIBUCION_PAGO,
         "distribucion_uso":    DISTRIBUCION_USO_CFDI,
+        "serie_temporal_completa": SERIE_TEMPORAL_COMPLETA,
     }
 
     results = {}

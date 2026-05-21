@@ -46,7 +46,7 @@ def get_top_clientes() -> pd.DataFrame:
 def get_distribucion_tipos() -> pd.DataFrame:
     df = read_gold("distribucion_tipos")
     df["total_facturado"] = df["total_facturado"].round(2)
-    tipo_map = {"I": "Ingreso", "E": "Egreso", "T": "Traslado", "N": "Nómina"}
+    tipo_map = {"I": "Ingreso", "E": "Egreso", "T": "Traslado", "N": "Nómina", "P": "Pago"}
     df["tipo_nombre"] = df["tipo_comprobante"].map(tipo_map)
     return df
 

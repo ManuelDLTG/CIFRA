@@ -98,3 +98,18 @@ WHERE tipo_comprobante = 'I'
 GROUP BY uso_cfdi
 ORDER BY total_facturado DESC
 """
+
+
+SERIE_TEMPORAL_COMPLETA = """
+SELECT
+    year,
+    month,
+    CAST(year AS varchar) || '-' || LPAD(CAST(month AS varchar), 2, '0') AS periodo,
+    SUM(CAST(total AS double))          AS total_facturado,
+    SUM(CAST(iva_trasladado AS double)) AS iva_total,
+    SUM(CASE WHEN tipo_comprobante = 'I' THEN CAST(total AS double) ELSE 0 END) AS total_ingresos,
+    SUM(CASE WHEN tipo_comprobante = 'E' THEN CAST(total AS double) ELSE 0 END) AS total_egresos
+FROM cifra_db.cfdi_silver
+GROUP BY year, month
+ORDER BY year, month
+"""
