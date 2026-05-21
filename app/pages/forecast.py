@@ -1,24 +1,22 @@
 from __future__ import annotations
 
-from pathlib import Path
-
+import awswrangler as wr
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 from app.utils.athena_connector import get_serie_temporal
 
-
-FORECAST_PATH = Path("artifacts/forecast/forecast_next_3_months.csv")
+FORECAST_S3 = "s3://cifra-datalake-dev/ml/forecast/forecast_next_3_months.csv"
 
 
 def load_forecast() -> pd.DataFrame:
-    if not FORECAST_PATH.exists():
+    try:
+        df = wr.s3.read_csv(FORECAST_S3)
+        df["forecast"] = df["forecast"].round(2)
+        return df
+    except Exception:
         return pd.DataFrame(columns=["periodo", "forecast"])
-
-    forecast = pd.read_csv(FORECAST_PATH)
-    forecast["forecast"] = forecast["forecast"].round(2)
-    return forecast
 
 
 def show():
@@ -101,5 +99,7 @@ def show():
         serie[["periodo", "num_cfdis", "total_facturado", "iva_total"]],
         use_container_width=True,
     )
+
+
 if __name__ == "__main__":
     show()
