@@ -7,8 +7,9 @@ Pipeline de datos end-to-end sobre AWS para ingesta, transformación y análisis
 
 Proyecto realizado por:
 
-Manuel De la Tejera
-Andrés Padrón 
+- Manuel De la Tejera
+
+- Andrés Padrón 
 
 ---
 
