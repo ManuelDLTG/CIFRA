@@ -61,3 +61,18 @@ def get_distribucion_uso() -> pd.DataFrame:
     df = read_gold("distribucion_uso")
     df["total_facturado"] = df["total_facturado"].round(2)
     return df
+
+
+def get_distribucion_uso() -> pd.DataFrame:
+    df = read_gold("distribucion_uso")
+    df["total_facturado"] = df["total_facturado"].round(2)
+    return df
+
+
+def get_serie_temporal_completa() -> pd.DataFrame:
+    df = read_gold("serie_temporal_completa")
+    for col in ["total_facturado", "iva_total", "total_ingresos", "total_egresos"]:
+        df[col] = df[col].round(2)
+    df["periodo"] = df["periodo"].astype(str)
+    df = df.sort_values(["year", "month"])
+    return df
