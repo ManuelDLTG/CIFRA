@@ -5,6 +5,13 @@ Pipeline de datos end-to-end sobre AWS para ingesta, transformación y análisis
 
 ---
 
+Proyecto realizado por:
+
+Manuel De la Tejera
+Andrés Padrón 
+
+---
+
 ## Arquitectura
 
 ```
@@ -107,6 +114,4 @@ aws cloudformation deploy \
 
 Los CFDIs de ejemplo provienen del portal de datos abiertos del SAT. No incluir XMLs con datos fiscales reales en el repo.
 
----
 
-*Proyecto académico — ITAM MCD*
