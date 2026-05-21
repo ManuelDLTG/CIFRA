@@ -44,3 +44,6 @@ logs/
 # SageMaker
 model.tar.gz
 output/
+.Rhistory
+artifacts/
+data/sample_cfdis/cfdis_xml_5k/
