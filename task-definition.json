@@ -1,0 +1,37 @@
+{
+  "family": "cifra-ai-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::448591726855:role/cifra-ecs-task-role",
+  "taskRoleArn": "arn:aws:iam::448591726855:role/cifra-ecs-task-role",
+  "containerDefinitions": [
+    {
+      "name": "cifra-ai",
+      "image": "448591726855.dkr.ecr.us-east-1.amazonaws.com/cifra-ai:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8501,
+          "hostPort": 8501,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "us-east-1"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/cifra-ai",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

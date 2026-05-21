@@ -1,0 +1,10 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+artifacts
+data/sample_cfdis/cfdis_xml_5k
+.Rhistory
