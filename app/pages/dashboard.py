@@ -54,8 +54,9 @@ def show():
 
     st.markdown("---")
 
+    # ── Ingresos mensuales — línea con markers ─────────────────────────────
     st.subheader("Ingresos mensuales")
-    fig = px.bar(
+    fig = px.line(
         serie,
         x="periodo",
         y="total_facturado",
@@ -63,16 +64,22 @@ def show():
             "periodo": "Periodo",
             "total_facturado": "Total facturado (MXN)",
         },
-        text_auto=".2s",
+        markers=True,
     )
     fig.update_traces(
-        hovertemplate="<b>%{x}</b><br>Total facturado: $%{y:,.0f}<extra></extra>"
+        line=dict(color="#38bdf8", width=2),
+        marker=dict(size=6, color="#38bdf8"),
+        hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
     )
     fig.update_layout(
         xaxis_tickangle=-45,
         height=460,
         margin=dict(l=20, r=20, t=20, b=20),
         showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
+        yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -92,14 +99,19 @@ def show():
                 "nombre_receptor": "Cliente",
             },
             text_auto=".2s",
+            color_discrete_sequence=["#2563eb"],
         )
         fig_clients.update_traces(
-            hovertemplate="<b>%{y}</b><br>Total facturado: $%{x:,.0f}<extra></extra>"
+            hovertemplate="<b>%{y}</b><br>$%{x:,.0f}<extra></extra>"
         )
         fig_clients.update_layout(
             height=430,
             margin=dict(l=20, r=20, t=20, b=20),
             showlegend=False,
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
+            yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
         )
         st.plotly_chart(fig_clients, use_container_width=True)
 
@@ -111,16 +123,18 @@ def show():
             values="total_facturado",
             names="tipo_nombre",
             hole=0.45,
+            color_discrete_sequence=["#38bdf8", "#2563eb", "#06b6d4", "#7c3aed"],
         )
         fig_tipos.update_traces(
             textposition="inside",
             textinfo="percent+label",
-            hovertemplate="<b>%{label}</b><br>Total: $%{value:,.0f}<extra></extra>",
+            hovertemplate="<b>%{label}</b><br>$%{value:,.0f}<extra></extra>",
         )
         fig_tipos.update_layout(
             height=430,
             margin=dict(l=20, r=20, t=20, b=20),
             legend_title_text="Tipo",
+            paper_bgcolor="rgba(0,0,0,0)",
         )
         st.plotly_chart(fig_tipos, use_container_width=True)
 
@@ -137,16 +151,19 @@ def show():
         },
         barmode="group",
         text_auto=".2s",
+        color_discrete_sequence=["#38bdf8", "#2563eb", "#06b6d4", "#7c3aed",
+                                  "#f97316", "#10b981", "#f43f5e", "#a855f7"],
     )
     fig_pago.update_traces(
-        hovertemplate=(
-            "<b>Método:</b> %{x}<br>"
-            "Total facturado: $%{y:,.0f}<extra></extra>"
-        )
+        hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>"
     )
     fig_pago.update_layout(
         height=460,
         margin=dict(l=20, r=20, t=20, b=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
+        yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
     )
     st.plotly_chart(fig_pago, use_container_width=True)
 
