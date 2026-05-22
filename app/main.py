@@ -36,11 +36,11 @@ with st.sidebar:
     st.markdown("---")
 
     page = option_menu(
-        menu_title="Navegación",
-        options=["Dashboard", "Subir CFDIs", "Forecast"],
-        icons=["bar-chart-line", "cloud-upload", "graph-up-arrow"],
-        menu_icon="grid",
-        default_index=0,
+    menu_title="Navegación",
+    options=["Home", "Dashboard", "Subir CFDIs", "Forecast"],
+    icons=["house", "bar-chart-line", "cloud-upload", "graph-up-arrow"],
+    menu_icon="grid",
+    default_index=0,
         styles={
             "container": {
                 "padding": "0.45rem",
@@ -82,17 +82,15 @@ with st.sidebar:
     st.caption("Bronze → Silver → Gold → ML")
 
 
-if page == "Dashboard":
+if page == "Home":
+    from app.pages import home
+    home.show()
+elif page == "Dashboard":
     from app.pages import dashboard
-
     dashboard.show()
-
 elif page == "Subir CFDIs":
     from app.pages import upload
-
     upload.show()
-
 elif page == "Forecast":
     from app.pages import forecast
-
     forecast.show()
