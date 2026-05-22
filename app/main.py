@@ -31,8 +31,8 @@ load_css()
 
 
 with st.sidebar:
-    st.markdown("## CIFRA AI")
-    st.caption("Inteligencia financiera y forecasting con CFDIs")
+    st.image("app/assets/logo.png", use_container_width=True)
+    st.caption("Inteligencia predictiva empresarial")
     st.markdown("---")
 
     page = option_menu(
