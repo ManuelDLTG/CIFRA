@@ -232,6 +232,7 @@ La aplicación fue dockerizada y desplegada públicamente utilizando Amazon ECR 
 # Aplicación Streamlit
 
 La interfaz interactiva fue desarrollada utilizando Streamlit.
+Url pública: http://54.80.241.173:8501/
 
 ---
 
