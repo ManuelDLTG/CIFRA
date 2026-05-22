@@ -142,17 +142,18 @@ def show():
         ("#059669", "#6ee7b7", "App", "Dashboard"),
     ]
 
-    st.markdown("""
+    pipeline_html = """
     <div style='background: linear-gradient(145deg, #1e293b, #0f172a);
                 border: 1px solid rgba(148,163,184,0.12);
                 border-radius: 16px; padding: 2.5rem 2rem;'>
         <div style='display: flex; align-items: center; justify-content: center;
                     gap: 0.5rem; flex-wrap: wrap;'>
-    """ + "".join([
-        f"""
+    """
+
+    for i, (color, text, label, sub) in enumerate(steps):
+        pipeline_html += f"""
         <div style='display: flex; align-items: center; gap: 0.5rem;'>
-            <div style='background: rgba({",".join(str(int(c[1:][i:i+2], 16)) for i in (0,2,4))},0.15);
-                        border: 1px solid {color};
+            <div style='border: 1px solid {color};
                         border-radius: 10px; padding: 0.6rem 1.1rem;
                         text-align: center; min-width: 80px;'>
                 <div style='color: {text}; font-weight: 800;
@@ -160,14 +161,12 @@ def show():
                 <div style='color: {color}; font-size: 0.7rem;
                             font-weight: 500; margin-top: 2px;'>{sub}</div>
             </div>
-            {"<div style='color: #334155; font-size: 1.2rem; font-weight: 300;'>→</div>" if i < len(steps)-1 else ""}
+            {"<div style='color: #334155; font-size: 1.2rem;'>→</div>" if i < len(steps)-1 else ""}
         </div>
         """
-        for i, (color, text, label, sub) in enumerate(steps)
-    ]) + """
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+
+    pipeline_html += "</div></div>"
+    st.markdown(pipeline_html, unsafe_allow_html=True)
 
     # ── Stack ─────────────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
