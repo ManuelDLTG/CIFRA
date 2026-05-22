@@ -26,11 +26,20 @@ def show():
         "de CFDIs a partir de la capa Gold."
     )
 
-    with st.spinner("Cargando métricas financieras desde S3 Gold..."):
-        serie = get_serie_temporal()
-        clientes = get_top_clientes()
-        tipos = get_distribucion_tipos()
-        pagos = get_distribucion_pago()
+    try:
+        with st.spinner("Cargando métricas financieras desde S3 Gold..."):
+            serie    = get_serie_temporal()
+            clientes = get_top_clientes()
+            tipos    = get_distribucion_tipos()
+            pagos    = get_distribucion_pago()
+    except Exception as e:
+        st.error("No se pudieron cargar los datos. Verifica la conexión con AWS.")
+        st.code(str(e))
+        return
+
+    if serie.empty:
+        st.warning("No hay datos disponibles en la capa Gold. Corre el pipeline primero.")
+        return
 
     total_facturado = serie["total_facturado"].sum()
     num_cfdis = serie["num_cfdis"].sum()

@@ -25,9 +25,18 @@ def show():
     st.title("Forecast financiero")
     st.caption("Predicción de ingresos, egresos e IVA para los próximos 3 meses")
 
-    with st.spinner("Cargando serie temporal y predicciones..."):
-        serie    = get_serie_temporal_completa()
-        forecast = load_forecast()
+    try:
+        with st.spinner("Cargando serie temporal y predicciones..."):
+            serie    = get_serie_temporal_completa()
+            forecast = load_forecast()
+    except Exception as e:
+        st.error("No se pudieron cargar los datos. Verifica la conexión con AWS.")
+        st.code(str(e))
+        return
+
+    if serie.empty:
+        st.warning("No hay datos disponibles. Corre el pipeline primero.")
+        return
 
     # Últimos 6 meses
     serie_reciente = serie.tail(6)
