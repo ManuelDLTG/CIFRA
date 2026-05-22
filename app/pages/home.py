@@ -190,7 +190,7 @@ def show():
         </div>
 
     </div>
-    """, height=120)
+    """, height=160)
 
     # ── Stack ─────────────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
