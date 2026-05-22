@@ -7,6 +7,7 @@ import base64
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 def _img_b64(path: str) -> str:
@@ -133,62 +134,63 @@ def show():
                margin: 0 0 1.5rem 0;'>Pipeline de datos</h2>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style='background: linear-gradient(145deg, #1e293b, #0f172a);
+    components.html("""
+    <div style="background: linear-gradient(145deg, #1e293b, #0f172a);
                 border: 1px solid rgba(148,163,184,0.12);
                 border-radius: 16px; padding: 2rem;
                 display: flex; align-items: center;
-                justify-content: center; gap: 0.75rem; flex-wrap: wrap;'>
+                justify-content: center; gap: 0.75rem; flex-wrap: wrap;
+                font-family: sans-serif;">
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(37,99,235,0.12); border: 1px solid #2563eb;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#93c5fd; font-weight:800; font-size:0.85rem;'>XML</div>
-            <div style='color:#2563eb; font-size:0.7rem; margin-top:3px;'>CFDI 4.0</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#93c5fd; font-weight:800; font-size:0.85rem;">XML</div>
+            <div style="color:#2563eb; font-size:0.7rem; margin-top:3px;">CFDI 4.0</div>
         </div>
-        <div style='color:#334155; font-size:1.4rem; font-weight:300;'>→</div>
+        <div style="color:#475569; font-size:1.4rem;">→</div>
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(217,119,6,0.12); border: 1px solid #d97706;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#fcd34d; font-weight:800; font-size:0.85rem;'>Bronze</div>
-            <div style='color:#d97706; font-size:0.7rem; margin-top:3px;'>Raw S3</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#fcd34d; font-weight:800; font-size:0.85rem;">Bronze</div>
+            <div style="color:#d97706; font-size:0.7rem; margin-top:3px;">Raw S3</div>
         </div>
-        <div style='color:#334155; font-size:1.4rem; font-weight:300;'>→</div>
+        <div style="color:#475569; font-size:1.4rem;">→</div>
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(100,116,139,0.12); border: 1px solid #64748b;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#cbd5e1; font-weight:800; font-size:0.85rem;'>Silver</div>
-            <div style='color:#64748b; font-size:0.7rem; margin-top:3px;'>Parquet</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#cbd5e1; font-weight:800; font-size:0.85rem;">Silver</div>
+            <div style="color:#64748b; font-size:0.7rem; margin-top:3px;">Parquet</div>
         </div>
-        <div style='color:#334155; font-size:1.4rem; font-weight:300;'>→</div>
+        <div style="color:#475569; font-size:1.4rem;">→</div>
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(202,138,4,0.12); border: 1px solid #ca8a04;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#fde68a; font-weight:800; font-size:0.85rem;'>Gold</div>
-            <div style='color:#ca8a04; font-size:0.7rem; margin-top:3px;'>Agregados</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#fde68a; font-weight:800; font-size:0.85rem;">Gold</div>
+            <div style="color:#ca8a04; font-size:0.7rem; margin-top:3px;">Agregados</div>
         </div>
-        <div style='color:#334155; font-size:1.4rem; font-weight:300;'>→</div>
+        <div style="color:#475569; font-size:1.4rem;">→</div>
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(124,58,237,0.12); border: 1px solid #7c3aed;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#c4b5fd; font-weight:800; font-size:0.85rem;'>ML</div>
-            <div style='color:#7c3aed; font-size:0.7rem; margin-top:3px;'>Forecast</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#c4b5fd; font-weight:800; font-size:0.85rem;">ML</div>
+            <div style="color:#7c3aed; font-size:0.7rem; margin-top:3px;">Forecast</div>
         </div>
-        <div style='color:#334155; font-size:1.4rem; font-weight:300;'>→</div>
+        <div style="color:#475569; font-size:1.4rem;">→</div>
 
-        <div style='text-align:center; padding: 0.75rem 1.25rem;
+        <div style="text-align:center; padding: 0.75rem 1.25rem;
                     background: rgba(5,150,105,0.12); border: 1px solid #059669;
-                    border-radius: 12px; min-width: 85px;'>
-            <div style='color:#6ee7b7; font-weight:800; font-size:0.85rem;'>App</div>
-            <div style='color:#059669; font-size:0.7rem; margin-top:3px;'>Dashboard</div>
+                    border-radius: 12px; min-width: 85px;">
+            <div style="color:#6ee7b7; font-weight:800; font-size:0.85rem;">App</div>
+            <div style="color:#059669; font-size:0.7rem; margin-top:3px;">Dashboard</div>
         </div>
 
     </div>
-    """, unsafe_allow_html=True)
+    """, height=120)
 
     # ── Stack ─────────────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
