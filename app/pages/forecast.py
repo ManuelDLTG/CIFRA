@@ -111,6 +111,13 @@ def show():
     )
     st.plotly_chart(fig, use_container_width=True)
 
+    st.download_button(
+    label="⬇️ Descargar forecast CSV",
+    data=forecast.to_csv(index=False),
+    file_name="forecast_3_meses.csv",
+    mime="text/csv",
+)
+
     # ── Gráfica IVA — últimos 6 meses + forecast ──────────────────────────
     st.subheader("IVA trasladado")
     fig2 = go.Figure()

@@ -124,6 +124,13 @@ def show():
         )
         st.plotly_chart(fig_clients, use_container_width=True)
 
+        st.download_button(
+            label="Descargar top clientes CSV",
+            data=clientes.to_csv(index=False),
+            file_name="top_clientes.csv",
+            mime="text/csv",
+        )
+
     with col_b:
         st.subheader("Composición por tipo de CFDI")
 
