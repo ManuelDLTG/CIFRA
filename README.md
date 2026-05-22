@@ -78,7 +78,7 @@ La solución fue desplegada completamente sobre AWS utilizando servicios orienta
 
 ## Diagrama de arquitectura
 
-![Arquitectura AWS](docs/images/Arquitectura.png)
+![Arquitectura AWS](docs/images/arq_2.png)
 
 ---
 
