@@ -41,32 +41,55 @@ def show():
         st.warning("No hay datos disponibles en la capa Gold. Corre el pipeline primero.")
         return
 
-    total_facturado = serie["total_facturado"].sum()
-    num_cfdis = serie["num_cfdis"].sum()
-    ticket_promedio = total_facturado / num_cfdis
-    ultimo_mes = serie.iloc[-1]
-    promedio_mensual = serie["total_facturado"].mean()
+    # ── Filtro de año ──────────────────────────────────────────────────────
+    años_disponibles = sorted(serie["year"].unique().tolist())
+    año_seleccionado = st.selectbox(
+        "Filtrar por año",
+        options=["Todos"] + [str(a) for a in años_disponibles],
+        index=0,
+    )
+
+    if año_seleccionado != "Todos":
+        serie_filtrada = serie[serie["year"] == int(año_seleccionado)]
+    else:
+        serie_filtrada = serie
+
+    # ── KPIs ───────────────────────────────────────────────────────────────
+    total_facturado  = serie_filtrada["total_facturado"].sum()
+    num_cfdis        = serie_filtrada["num_cfdis"].sum()
+    ticket_promedio  = total_facturado / num_cfdis if num_cfdis > 0 else 0
+    ultimo_mes       = serie_filtrada.iloc[-1]
+    promedio_mensual = serie_filtrada["total_facturado"].mean()
+
+    # Variación vs mes anterior
+    if len(serie_filtrada) >= 2:
+        mes_anterior = serie_filtrada.iloc[-2]["total_facturado"]
+        variacion = ((ultimo_mes["total_facturado"] - mes_anterior) / mes_anterior) * 100
+        delta_ultimo = f"{variacion:+.1f}%"
+    else:
+        delta_ultimo = None
 
     st.markdown("### Resumen ejecutivo")
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total facturado", format_money(total_facturado))
+    col1.metric("Total facturado",  format_money(total_facturado))
     col2.metric("CFDIs procesados", f"{num_cfdis:,}")
-    col3.metric("Ticket promedio", format_money(ticket_promedio))
-    col4.metric("Último mes", format_money(ultimo_mes["total_facturado"]))
+    col3.metric("Ticket promedio",  format_money(ticket_promedio))
+    col4.metric("Último mes",       format_money(ultimo_mes["total_facturado"]),
+                delta=delta_ultimo, delta_color="normal")
 
     st.info(
         f"El pipeline consolidó **{num_cfdis:,} CFDIs** en una serie histórica de "
-        f"**{len(serie)} meses**, con una facturación mensual promedio de "
+        f"**{len(serie_filtrada)} meses**, con una facturación mensual promedio de "
         f"**{format_money(promedio_mensual)}**."
     )
 
     st.markdown("---")
 
-    # ── Ingresos mensuales — línea con markers ─────────────────────────────
+    # ── Ingresos mensuales ─────────────────────────────────────────────────
     st.subheader("Ingresos mensuales")
     fig = px.line(
-        serie,
+        serie_filtrada,
         x="periodo",
         y="total_facturado",
         labels={
@@ -123,7 +146,6 @@ def show():
             yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
         )
         st.plotly_chart(fig_clients, use_container_width=True)
-
         st.download_button(
             label="Descargar top clientes CSV",
             data=clientes.to_csv(index=False),
@@ -133,13 +155,12 @@ def show():
 
     with col_b:
         st.subheader("Composición por tipo de CFDI")
-
         fig_tipos = px.pie(
             tipos,
             values="total_facturado",
             names="tipo_nombre",
             hole=0.45,
-            color_discrete_sequence=["#38bdf8", "#2563eb", "#06b6d4", "#7c3aed"],
+            color_discrete_sequence=["#38bdf8", "#2563eb", "#06b6d4", "#7c3aed", "#f97316"],
         )
         fig_tipos.update_traces(
             textposition="inside",
@@ -153,6 +174,12 @@ def show():
             paper_bgcolor="rgba(0,0,0,0)",
         )
         st.plotly_chart(fig_tipos, use_container_width=True)
+        st.download_button(
+            label="Descargar distribución CSV",
+            data=tipos.to_csv(index=False),
+            file_name="distribucion_tipos.csv",
+            mime="text/csv",
+        )
 
     st.subheader("Distribución por método y forma de pago")
     fig_pago = px.bar(
@@ -182,6 +209,12 @@ def show():
         yaxis=dict(gridcolor="rgba(148,163,184,0.1)"),
     )
     st.plotly_chart(fig_pago, use_container_width=True)
+    st.download_button(
+        label="Descargar distribución pagos CSV",
+        data=pagos.to_csv(index=False),
+        file_name="distribucion_pagos.csv",
+        mime="text/csv",
+    )
 
     st.markdown("---")
     st.caption(
