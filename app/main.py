@@ -3,6 +3,7 @@ app/main.py
 Entry point de la app CIFRA AI en Streamlit.
 """
 
+import base64
 from pathlib import Path
 
 import streamlit as st
@@ -11,14 +12,13 @@ from streamlit_option_menu import option_menu
 
 st.set_page_config(
     page_title="CIFRA AI",
-    page_icon="📊",
+    page_icon="app/assets/favicon.ico",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 
 def load_css() -> None:
-    """Load custom CSS styles."""
     css_path = Path("app/styles/custom.css")
     if css_path.exists():
         st.markdown(
@@ -27,20 +27,32 @@ def load_css() -> None:
         )
 
 
+def render_logo(path: str, max_width: str = "200px") -> None:
+    """Renderiza el logo como base64 para respetar transparencia."""
+    logo_path = Path(path)
+    if logo_path.exists():
+        b64 = base64.b64encode(logo_path.read_bytes()).decode()
+        st.markdown(
+            f'<div style="text-align:center; padding: 0.5rem 0;">'
+            f'<img src="data:image/png;base64,{b64}" '
+            f'style="max-width:{max_width}; width:100%;"></div>',
+            unsafe_allow_html=True,
+        )
+
+
 load_css()
 
 
 with st.sidebar:
-    st.image("app/assets/logo.png", use_container_width=True)
-    st.caption("Inteligencia predictiva empresarial")
+    render_logo("app/assets/logo.png", max_width="180px")
     st.markdown("---")
 
     page = option_menu(
-    menu_title="Navegación",
-    options=["Home", "Dashboard", "Subir CFDIs", "Forecast"],
-    icons=["house", "bar-chart-line", "cloud-upload", "graph-up-arrow"],
-    menu_icon="grid",
-    default_index=0,
+        menu_title="Navegación",
+        options=["Home", "Dashboard", "Subir CFDIs", "Forecast"],
+        icons=["house", "bar-chart-line", "cloud-upload", "graph-up-arrow"],
+        menu_icon="grid",
+        default_index=0,
         styles={
             "container": {
                 "padding": "0.45rem",
