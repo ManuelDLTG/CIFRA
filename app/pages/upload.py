@@ -17,12 +17,14 @@ API_URL = os.environ.get("API_GATEWAY_URL", "")
 
 
 def format_money(value) -> str:
+    """Format numeric values as MXN currency."""
     if value in (None, "—"):
         return "—"
     return f"${float(value):,.2f}"
 
 
 def parse_uploaded_file(file) -> dict:
+    """Parse uploaded CFDI XML and return relevant fields."""
     xml_bytes = file.getvalue()
     parsed = parse_cfdi(xml_bytes)
 
@@ -37,6 +39,48 @@ def parse_uploaded_file(file) -> dict:
         "moneda": parsed.get("moneda"),
         "xml_bytes": xml_bytes,
     }
+
+
+def send_to_bronze(record: dict) -> dict:
+    """Send a parsed CFDI XML to the API Gateway ingestion endpoint."""
+    xml_b64 = base64.b64encode(record["xml_bytes"]).decode()
+
+    try:
+        response = requests.post(
+            API_URL,
+            json={
+                "xml_base64": xml_b64,
+                "filename": record["archivo"],
+            },
+            timeout=30,
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = {
+                "status": "error",
+                "message": response.text,
+            }
+
+        return {
+            "archivo": record["archivo"],
+            "http_status": response.status_code,
+            "status": data.get("status", "error"),
+            "message": data.get("message", data.get("error", "sin detalle")),
+            "uuid": data.get("uuid", record["uuid"]),
+            "total": data.get("total", format_money(record["total"])),
+        }
+
+    except Exception as error:
+        return {
+            "archivo": record["archivo"],
+            "http_status": "—",
+            "status": "error",
+            "message": str(error),
+            "uuid": record["uuid"],
+            "total": format_money(record["total"]),
+        }
 
 
 def show():
@@ -73,7 +117,12 @@ def show():
         try:
             parsed_records.append(parse_uploaded_file(file))
         except Exception as error:
-            errors.append({"archivo": file.name, "error": str(error)})
+            errors.append(
+                {
+                    "archivo": file.name,
+                    "error": str(error),
+                }
+            )
 
     st.markdown("### Validación de archivos")
 
@@ -86,32 +135,39 @@ def show():
         st.error("Algunos archivos no pudieron validarse como CFDI 4.0.")
         st.dataframe(pd.DataFrame(errors), use_container_width=True)
 
-    if parsed_records:
-        preview_df = pd.DataFrame(
-            [
-                {
-                    "archivo": r["archivo"],
-                    "uuid": r["uuid"],
-                    "fecha": r["fecha"],
-                    "tipo": r["tipo"],
-                    "emisor": r["emisor"],
-                    "receptor": r["receptor"],
-                    "total": format_money(r["total"]),
-                    "moneda": r["moneda"],
-                }
-                for r in parsed_records
-            ]
-        )
+    if not parsed_records:
+        st.warning("No hay CFDIs válidos para enviar al pipeline.")
+        return
 
-        st.markdown("### Vista previa de CFDIs válidos")
-        st.dataframe(preview_df, use_container_width=True)
+    preview_df = pd.DataFrame(
+        [
+            {
+                "archivo": record["archivo"],
+                "uuid": record["uuid"],
+                "fecha": record["fecha"],
+                "tipo": record["tipo"],
+                "emisor": record["emisor"],
+                "receptor": record["receptor"],
+                "total": format_money(record["total"]),
+                "moneda": record["moneda"],
+            }
+            for record in parsed_records
+        ]
+    )
 
-        total_carga = sum(float(r["total"]) for r in parsed_records if r["total"] is not None)
+    st.markdown("### Vista previa de CFDIs válidos")
+    st.dataframe(preview_df, use_container_width=True)
 
-        col_a, col_b, col_c = st.columns(3)
-        col_a.metric("Monto total de la carga", format_money(total_carga))
-        col_b.metric("Moneda", preview_df["moneda"].mode().iloc[0])
-        col_c.metric("Tipo principal", preview_df["tipo"].mode().iloc[0])
+    total_carga = sum(
+        float(record["total"])
+        for record in parsed_records
+        if record["total"] is not None
+    )
+
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Monto total de la carga", format_money(total_carga))
+    col_b.metric("Moneda", preview_df["moneda"].mode().iloc[0])
+    col_c.metric("Tipo principal", preview_df["tipo"].mode().iloc[0])
 
     st.markdown("---")
 
@@ -127,41 +183,24 @@ def show():
         progress = st.progress(0)
 
         for idx, record in enumerate(parsed_records):
-            xml_b64 = base64.b64encode(record["xml_bytes"]).decode()
-
-            try:
-                response = requests.post(
-                    API_URL,
-                    json={
-                        "xml_base64": xml_b64,
-                        "filename": record["archivo"],
-                    },
-                    timeout=30,
-                )
-                data = response.json()
-
-                resultados.append(
-                    {
-                        "archivo": record["archivo"],
-                        "status": data.get("status", "error"),
-                        "uuid": data.get("uuid", record["uuid"]),
-                        "total": data.get("total", format_money(record["total"])),
-                    }
-                )
-            except Exception as error:
-                resultados.append(
-                    {
-                        "archivo": record["archivo"],
-                        "status": "error",
-                        "uuid": record["uuid"],
-                        "total": str(error),
-                    }
-                )
-
+            resultados.append(send_to_bronze(record))
             progress.progress((idx + 1) / len(parsed_records))
 
-        st.success(f"{len(parsed_records)} archivo(s) enviados al pipeline.")
-        st.dataframe(pd.DataFrame(resultados), use_container_width=True)
+        results_df = pd.DataFrame(resultados)
+
+        valid_statuses = ["success", "duplicate", "ok"]
+
+        if results_df["status"].isin(valid_statuses).all():
+            st.success(
+                f"{len(parsed_records)} archivo(s) procesados correctamente."
+            )
+        else:
+            st.warning(
+                "La solicitud terminó, pero al menos un archivo tuvo error. "
+                "Revisa la columna `message`."
+            )
+
+        st.dataframe(results_df, use_container_width=True)
 
 
 if __name__ == "__main__":
