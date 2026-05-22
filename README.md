@@ -1,7 +1,9 @@
-# CIFRA
-### CFDI Intelligence, Forecasting & Reporting Architecture
+# CIFRA AI
+### Plataforma de Inteligencia Predictiva Empresarial basada en CFDIs
 
-Pipeline de datos end-to-end sobre AWS para ingesta, transformación y análisis de CFDIs (facturas emitidas). Implementa arquitectura Medallion (Bronze → Silver → Gold) con una app Streamlit para carga y visualización, y modelos de forecasting de flujo de caja.
+Pipeline end-to-end sobre AWS para ingesta, transformación, análisis y forecasting financiero utilizando CFDIs (Comprobantes Fiscales Digitales por Internet).
+
+La solución implementa una arquitectura Medallion (Bronze → Silver → Gold), integrando procesamiento serverless, analítica SQL, visualización interactiva y modelos de Machine Learning para predicción de flujo de caja.
 
 ---
 
@@ -12,98 +14,174 @@ Pipeline de datos end-to-end sobre AWS para ingesta, transformación y análisis
 
 ---
 
+# Aplicación pública
+
+Disponible en:
+
+```text
+http://54.80.241.173:8501/
+```
+
+---
+
 # Arquitectura General
 
 ```text
 Streamlit App
-     │  (upload XML)
+     │
+     │ Upload CFDI XML
      ▼
-API Gateway → Lambda (ingest)
-                    │
-                    ▼
-           S3 Bronze (raw XML)
-                    │
-              Glue Job (ETL)
-                    │
-                    ▼
-           S3 Silver (Parquet)
-                    │
-          ┌─────────┴──────────┐
-          ▼                    ▼
-    Amazon Athena         SageMaker
-   (análisis SQL)       (forecasting)
-          │                    │
-          └─────────┬──────────┘
-                    ▼
-           S3 Gold (agregados)
-                    │
-                    ▼
-           Streamlit Dashboard
+API Gateway
+     │
+     ▼
+AWS Lambda (ingest_function)
+     │
+     ├── Validación XML
+     ├── Parsing CFDI
+     ├── Detección de duplicados
+     └── Particionado automático
+     ▼
+Amazon S3 Bronze
+     │
+     ▼
+AWS Glue ETL
+     │
+     ▼
+Amazon S3 Silver (Parquet)
+     │
+     ├───────────────┐
+     ▼               ▼
+Amazon Athena     SageMaker
+(SQL Analytics)   Forecasting
+     │               │
+     └───────┬───────┘
+             ▼
+Amazon S3 Gold
+             │
+             ▼
+Streamlit Dashboard
 ```
 
 ---
 
 # Arquitectura AWS
 
-La solución fue desplegada completamente sobre AWS utilizando una arquitectura orientada a Data Engineering, Analytics y Machine Learning.
+La solución fue desplegada completamente sobre AWS utilizando servicios orientados a:
 
-El flujo implementado sigue el patrón:
-
-```text
-XML CFDI → S3 Bronze → Glue ETL → S3 Silver → Athena → Streamlit Dashboard → Forecasting
-```
-
-La infraestructura integra servicios serverless, Data Lake Medallion, consultas analíticas y despliegue mediante contenedores Docker sobre ECS Fargate.
+- Data Engineering
+- Serverless Computing
+- Data Lake Analytics
+- Machine Learning
+- Visualización interactiva
 
 ---
 
 ## Diagrama de arquitectura
 
-![Arquitectura](docs/images/Arquitectura.png)
+![Arquitectura AWS](docs/images/Arquitectura.png)
 
 ---
 
-# Data Lake Medallion
+# Pipeline Medallion
 
-Se implementó una arquitectura Medallion (Bronze → Silver → Gold) sobre Amazon S3.
+La arquitectura implementa el patrón Bronze → Silver → Gold sobre Amazon S3.
+
+---
 
 ## Amazon S3 Data Lake
 
 ![S3 Data Lake](docs/images/S3_datalake.png)
 
 ### Bronze Layer
-- Almacenamiento de XMLs CFDI originales
+
+- Almacenamiento de CFDIs XML originales
 - Persistencia histórica
-- Datos sin transformación
+- Detección de duplicados
+- Organización por particiones:
+  - RFC
+  - Año
+  - Mes
 
 ### Silver Layer
-- CFDIs parseados y normalizados
+
+- CFDIs parseados
 - Conversión a formato Parquet
-- Limpieza y tipado de columnas
+- Tipado y limpieza de columnas
+- Datos estructurados para analytics
 
 ### Gold Layer
-- Agregaciones financieras
-- KPIs
-- Series temporales
-- Features para forecasting
+
+- KPIs financieros
+- Agregaciones mensuales
+- Features de forecasting
+- Métricas ejecutivas
+
+---
+
+# Ingesta serverless de CFDIs
+
+La capa de ingestión fue desarrollada utilizando:
+
+- API Gateway
+- AWS Lambda
+- Amazon S3
+- CloudWatch Logs
+
+---
+
+## Flujo de ingestión
+
+1. El usuario carga CFDIs desde Streamlit
+2. El XML se valida localmente
+3. El archivo se codifica en Base64
+4. Streamlit consume el endpoint REST
+5. Lambda:
+   - decodifica el XML,
+   - valida estructura,
+   - parsea metadata,
+   - verifica duplicados,
+   - almacena el CFDI en Bronze
+
+---
+
+## Endpoint REST
+
+```text
+POST /dev/upload
+```
+
+---
+
+## Funcionalidades implementadas
+
+- Validación XML CFDI
+- Extracción automática de metadata
+- Detección de duplicados
+- Persistencia automática en S3
+- Logging con CloudWatch
+- Manejo estructurado de errores
+- Arquitectura serverless
 
 ---
 
 # AWS Glue Data Catalog
 
-El esquema de los CFDIs procesados fue registrado automáticamente en AWS Glue Data Catalog.
+Los datos procesados fueron registrados automáticamente en AWS Glue Data Catalog.
+
+---
 
 ## Glue Catalog
 
 ![Glue Catalog](docs/images/glue_catalog.png)
 
-Columnas registradas:
+### Columnas registradas
+
 - RFC emisor
 - RFC receptor
 - Método de pago
 - Forma de pago
-- Fecha de emisión
 - Tipo de comprobante
+- Fecha de emisión
 - Moneda
 - Régimen fiscal
 - Total facturado
@@ -114,104 +192,114 @@ Columnas registradas:
 
 Amazon Athena fue utilizado para ejecutar consultas SQL directamente sobre los datos almacenados en S3.
 
+---
+
 ## Athena Query
 
 ![Athena Query](docs/images/Athena_query.png)
 
-Ejemplos de análisis:
+### Análisis implementados
+
 - Ingresos mensuales
 - Evolución temporal
 - KPIs financieros
 - Top clientes
-- Distribución de métodos de pago
+- Métodos de pago
+- Distribución de CFDIs
 
 ---
 
 # Containerización y despliegue
 
-La aplicación fue dockerizada y publicada en Amazon ECR.
+La aplicación fue dockerizada y desplegada públicamente utilizando Amazon ECR y una instancia EC2 pública.
+
+---
 
 ## Amazon ECR
 
 ![Amazon ECR](docs/images/ECR_repo.png)
 
-La imagen Docker contiene:
+### La imagen Docker contiene
+
 - Streamlit App
+- Forecasting
 - Conector Athena
 - Visualizaciones financieras
-- Forecasting
-- Integración con AWS
+- Integración AWS
 
 ---
 
-# ECS Fargate Deployment
+# Aplicación Streamlit
 
-La aplicación fue desplegada sobre ECS Fargate.
-
-## ECS Cluster y servicio
-
-![ECS Cluster](docs/images/ECS_cluster.png)
-
-Características:
-- Infraestructura serverless
-- Contenedores administrados
-- Escalabilidad automática
-- Integración con ECR
-- Networking mediante VPC
-- Seguridad mediante Security Groups
+La interfaz interactiva fue desarrollada utilizando Streamlit.
 
 ---
 
-# Streamlit Application
+## Home
 
-La capa de presentación fue desarrollada con Streamlit.
+![Home](docs/images/home2.png)
+
+### Características
+
+- Navegación interactiva
+- Arquitectura del pipeline
+- Descripción funcional
+- Flujo Bronze → Silver → Gold
 
 ---
 
-## Dashboard principal
+## Dashboard financiero
 
-![Dashboard](docs/images/dashboard.png)
+![Dashboard](docs/images/dashboard2.png)
 
-Incluye:
+### Incluye
+
 - KPIs financieros
-- Top clientes
-- Distribución de CFDIs
-- Análisis de pagos
+- Total facturado
+- Total CFDIs
+- Ticket promedio
 - Visualizaciones interactivas
+- Series temporales
 
 ---
 
-## Carga de CFDIs
+## Validación y carga de CFDIs
 
-![Subir CFDIs](docs/images/subir_cfdis.png)
+![Subir CFDIs](docs/images/cfdis2.png)
 
-La aplicación permite:
-- Validación de XMLs CFDI
-- Extracción automática de campos
-- Vista previa de información
-- Integración con pipeline Bronze → Silver → Gold
+### Características
+
+- Validación automática de XMLs CFDI
+- Extracción automática de metadata
+- Vista previa de CFDIs válidos
+- Integración con Lambda
+- Persistencia automática en Bronze
+- Detección de duplicados
 
 ---
 
 ## Forecast financiero
 
-![Forecast](docs/images/forecast.png)
+![Forecast](docs/images/forecast2.png)
 
-Incluye:
-- Series temporales
+### Incluye
+
 - Forecast de ingresos
-- Tendencias financieras
-- Métricas agregadas
+- Forecast de egresos
+- Forecast de IVA
+- Series temporales
+- Exportación CSV
+- Modelos de predicción financiera
 
 ---
 
-# Capas del Datalake
+# Capas del Data Lake
 
 | Capa | Formato | Contenido |
 |---|---|---|
-| Bronze | XML original | CFDIs sin modificar |
-| Silver | Parquet | CFDIs parseados y limpios |
-| Gold | Parquet | Agregaciones y features analíticos |
+| Bronze | XML | CFDIs originales |
+| Silver | Parquet | CFDIs parseados |
+| Gold | Parquet | KPIs y agregaciones |
 
 ---
 
@@ -219,21 +307,21 @@ Incluye:
 
 ```text
 cifra/
+├── app/
 ├── ingestion/
+├── infrastructure/
 ├── bronze/
 ├── silver/
 ├── gold/
 ├── ml/
-├── app/
-├── infrastructure/
-├── data/
 ├── notebooks/
-└── docs/
+├── docs/
+└── data/
 ```
 
 ---
 
-# Setup
+# Setup local
 
 ```bash
 git clone https://github.com/ManuelDLTG/cifra.git
@@ -247,7 +335,7 @@ pip install -r requirements.txt
 
 ---
 
-# Ejecutar aplicación localmente
+# Ejecutar Streamlit localmente
 
 ```bash
 streamlit run app/main.py
@@ -255,13 +343,41 @@ streamlit run app/main.py
 
 ---
 
-# Deploy infraestructura AWS
+# Docker
+
+## Build
 
 ```bash
-aws cloudformation deploy \
-  --template-file infrastructure/cloudformation/cifra_stack.yaml \
-  --stack-name cifra-stack \
-  --capabilities CAPABILITY_IAM
+docker build -t cifra-ai .
+```
+
+---
+
+## Run
+
+```bash
+docker run -p 8501:8501 cifra-ai
+```
+
+---
+
+# AWS Deployment
+
+## Login ECR
+
+```bash
+aws ecr get-login-password --region us-east-1 | \
+docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
+```
+
+---
+
+## Push Docker image
+
+```bash
+docker tag cifra-ai:latest <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/cifra-ai:latest
+
+docker push <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/cifra-ai:latest
 ```
 
 ---
@@ -271,43 +387,46 @@ aws cloudformation deploy \
 | Servicio | Uso |
 |---|---|
 | Amazon S3 | Data Lake Medallion |
-| AWS Lambda | Procesamiento serverless |
+| AWS Lambda | Ingesta serverless |
+| API Gateway | Endpoint REST |
 | AWS Glue | ETL y catálogo |
 | Amazon Athena | SQL Analytics |
-| Amazon ECS Fargate | Deploy serverless |
 | Amazon ECR | Registro Docker |
+| Amazon EC2 | Hosting público |
 | AWS IAM | Roles y permisos |
-| AWS CloudWatch | Logging |
-| Amazon SageMaker | Forecasting |
-| Streamlit | Dashboard interactivo |
+| CloudWatch | Logging |
+| SageMaker | Forecasting |
 
 ---
 
 # Stack tecnológico
 
 - Python
-- PySpark
 - Streamlit
+- Pandas
+- Plotly
 - Docker
-- AWS Glue
-- Amazon Athena
-- Amazon ECS Fargate
-- Amazon ECR
+- AWS Lambda
+- API Gateway
 - Amazon S3
-- Amazon SageMaker
+- AWS Glue
+- Athena
+- SageMaker
 
 ---
 
 # Características técnicas
 
 - Arquitectura Medallion
-- ETL serverless
-- Query engine desacoplado
-- Forecasting financiero
-- Infraestructura cloud-native
-- Docker + ECS
+- Pipeline end-to-end
+- Procesamiento serverless
+- Ingesta automática de CFDIs
+- Forecast financiero
+- Docker deployment
+- Cloud-native architecture
 - Dashboard interactivo
-- Pipeline reproducible
+- Logging distribuido
+- Arquitectura reproducible
 
 ---
 
@@ -316,15 +435,18 @@ aws cloudformation deploy \
 El proyecto logró implementar exitosamente:
 
 - Pipeline end-to-end sobre AWS
-- Procesamiento escalable de CFDIs
-- Data Lake Medallion
+- Arquitectura Medallion
+- Ingesta serverless con Lambda
+- Persistencia automática en S3
 - Dashboard financiero interactivo
 - Forecasting financiero
-- Integración entre S3, Glue, Athena y ECS
-- Aplicación desplegada públicamente mediante ECS Fargate
+- Integración Athena + Streamlit
+- Docker deployment público
+- Procesamiento automático de CFDIs
+- Arquitectura cloud-native escalable
 
 ---
 
 # Datos
 
-Los CFDIs utilizados corresponden a datos de ejemplo y pruebas académicas. No se incluyen CFDIs reales sensibles dentro del repositorio.
+Los CFDIs utilizados corresponden a datos de prueba y fines académicos. No se incluyen CFDIs reales sensibles dentro del repositorio.
