@@ -19,7 +19,7 @@ La solución implementa una arquitectura Medallion (Bronze → Silver → Gold),
 Disponible en:
 
 ```text
-http://54.80.241.173:8501/
+http://3.81.218.20:8501//
 ```
 
 ---
@@ -232,7 +232,7 @@ La aplicación fue dockerizada y desplegada públicamente utilizando Amazon ECR 
 # Aplicación Streamlit
 
 La interfaz interactiva fue desarrollada utilizando Streamlit.
-Url pública: http://54.80.241.173:8501/
+Url pública: http://3.81.218.20:8501/
 
 ---
 
