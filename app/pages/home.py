@@ -133,40 +133,63 @@ def show():
                margin: 0 0 1.5rem 0;'>Pipeline de datos</h2>
     """, unsafe_allow_html=True)
 
-    steps = [
-        ("#2563eb", "#93c5fd", "XML", "CFDI 4.0"),
-        ("#d97706", "#fcd34d", "Bronze", "Raw S3"),
-        ("#64748b", "#cbd5e1", "Silver", "Parquet"),
-        ("#ca8a04", "#fde68a", "Gold", "Agregados"),
-        ("#7c3aed", "#c4b5fd", "ML", "Forecast"),
-        ("#059669", "#6ee7b7", "App", "Dashboard"),
-    ]
-
-    pipeline_html = """
+    st.markdown("""
     <div style='background: linear-gradient(145deg, #1e293b, #0f172a);
                 border: 1px solid rgba(148,163,184,0.12);
                 border-radius: 16px; padding: 2.5rem 2rem;'>
         <div style='display: flex; align-items: center; justify-content: center;
                     gap: 0.5rem; flex-wrap: wrap;'>
-    """
 
-    for i, (color, text, label, sub) in enumerate(steps):
-        pipeline_html += f"""
-        <div style='display: flex; align-items: center; gap: 0.5rem;'>
-            <div style='border: 1px solid {color};
-                        border-radius: 10px; padding: 0.6rem 1.1rem;
-                        text-align: center; min-width: 80px;'>
-                <div style='color: {text}; font-weight: 800;
-                            font-size: 0.9rem;'>{label}</div>
-                <div style='color: {color}; font-size: 0.7rem;
-                            font-weight: 500; margin-top: 2px;'>{sub}</div>
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #2563eb;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#93c5fd;font-weight:800;font-size:0.9rem;'>XML</div>
+                    <div style='color:#2563eb;font-size:0.7rem;font-weight:500;margin-top:2px;'>CFDI 4.0</div>
+                </div>
+                <div style='color:#334155;font-size:1.2rem;'>→</div>
             </div>
-            {"<div style='color: #334155; font-size: 1.2rem;'>→</div>" if i < len(steps)-1 else ""}
-        </div>
-        """
 
-    pipeline_html += "</div></div>"
-    st.markdown(pipeline_html, unsafe_allow_html=True)
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #d97706;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#fcd34d;font-weight:800;font-size:0.9rem;'>Bronze</div>
+                    <div style='color:#d97706;font-size:0.7rem;font-weight:500;margin-top:2px;'>Raw S3</div>
+                </div>
+                <div style='color:#334155;font-size:1.2rem;'>→</div>
+            </div>
+
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #64748b;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#cbd5e1;font-weight:800;font-size:0.9rem;'>Silver</div>
+                    <div style='color:#64748b;font-size:0.7rem;font-weight:500;margin-top:2px;'>Parquet</div>
+                </div>
+                <div style='color:#334155;font-size:1.2rem;'>→</div>
+            </div>
+
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #ca8a04;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#fde68a;font-weight:800;font-size:0.9rem;'>Gold</div>
+                    <div style='color:#ca8a04;font-size:0.7rem;font-weight:500;margin-top:2px;'>Agregados</div>
+                </div>
+                <div style='color:#334155;font-size:1.2rem;'>→</div>
+            </div>
+
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #7c3aed;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#c4b5fd;font-weight:800;font-size:0.9rem;'>ML</div>
+                    <div style='color:#7c3aed;font-size:0.7rem;font-weight:500;margin-top:2px;'>Forecast</div>
+                </div>
+                <div style='color:#334155;font-size:1.2rem;'>→</div>
+            </div>
+
+            <div style='display:flex;align-items:center;gap:0.5rem;'>
+                <div style='border:1px solid #059669;border-radius:10px;padding:0.6rem 1.1rem;text-align:center;min-width:80px;'>
+                    <div style='color:#6ee7b7;font-weight:800;font-size:0.9rem;'>App</div>
+                    <div style='color:#059669;font-size:0.7rem;font-weight:500;margin-top:2px;'>Dashboard</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # ── Stack ─────────────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
