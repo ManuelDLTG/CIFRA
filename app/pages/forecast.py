@@ -29,6 +29,9 @@ def show():
         serie    = get_serie_temporal_completa()
         forecast = load_forecast()
 
+    # Últimos 6 meses
+    serie_reciente = serie.tail(6)
+
     # ── KPIs ──────────────────────────────────────────────────────────────
     if not forecast.empty:
         col1, col2, col3, col4 = st.columns(4)
@@ -39,20 +42,34 @@ def show():
 
     st.markdown("---")
 
-    # ── Gráfica ingresos vs egresos histórico + forecast ──────────────────
+    # ── Gráfica ingresos vs egresos — últimos 6 meses + forecast ──────────
     st.subheader("Ingresos vs Egresos")
     fig = go.Figure()
 
+    # Área sombreada para distinguir zona de forecast
+    if not forecast.empty:
+        fig.add_vrect(
+            x0=forecast["periodo"].iloc[0],
+            x1=forecast["periodo"].iloc[-1],
+            fillcolor="rgba(249, 115, 22, 0.08)",
+            layer="below", line_width=0,
+            annotation_text="Forecast",
+            annotation_position="top left",
+            annotation_font_color="#f97316",
+        )
+
     fig.add_trace(go.Scatter(
-        x=serie["periodo"], y=serie["total_ingresos"],
+        x=serie_reciente["periodo"], y=serie_reciente["total_ingresos"],
         mode="lines+markers", name="Ingresos histórico",
         line=dict(color="#38bdf8", width=2),
+        marker=dict(size=6),
         hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
     ))
     fig.add_trace(go.Scatter(
-        x=serie["periodo"], y=serie["total_egresos"],
+        x=serie_reciente["periodo"], y=serie_reciente["total_egresos"],
         mode="lines+markers", name="Egresos histórico",
         line=dict(color="#f43f5e", width=2),
+        marker=dict(size=6),
         hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
     ))
 
@@ -60,16 +77,18 @@ def show():
         fig.add_trace(go.Scatter(
             x=forecast["periodo"], y=forecast["total_ingresos"],
             mode="lines+markers", name="Forecast ingresos",
-            line=dict(color="#38bdf8", width=2, dash="dash"),
-            marker=dict(size=10, symbol="diamond"),
-            hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
+            line=dict(color="#38bdf8", width=3, dash="dash"),
+            marker=dict(size=14, symbol="diamond", color="#38bdf8",
+                        line=dict(color="white", width=2)),
+            hovertemplate="<b>%{x} — Forecast</b><br>$%{y:,.0f}<extra></extra>",
         ))
         fig.add_trace(go.Scatter(
             x=forecast["periodo"], y=forecast["total_egresos"],
             mode="lines+markers", name="Forecast egresos",
-            line=dict(color="#f43f5e", width=2, dash="dash"),
-            marker=dict(size=10, symbol="diamond"),
-            hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
+            line=dict(color="#f43f5e", width=3, dash="dash"),
+            marker=dict(size=14, symbol="diamond", color="#f43f5e",
+                        line=dict(color="white", width=2)),
+            hovertemplate="<b>%{x} — Forecast</b><br>$%{y:,.0f}<extra></extra>",
         ))
 
     fig.update_layout(
@@ -83,14 +102,26 @@ def show():
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # ── Gráfica IVA histórico + forecast ──────────────────────────────────
+    # ── Gráfica IVA — últimos 6 meses + forecast ──────────────────────────
     st.subheader("IVA trasladado")
     fig2 = go.Figure()
 
+    if not forecast.empty:
+        fig2.add_vrect(
+            x0=forecast["periodo"].iloc[0],
+            x1=forecast["periodo"].iloc[-1],
+            fillcolor="rgba(168, 85, 247, 0.08)",
+            layer="below", line_width=0,
+            annotation_text="Forecast",
+            annotation_position="top left",
+            annotation_font_color="#a855f7",
+        )
+
     fig2.add_trace(go.Scatter(
-        x=serie["periodo"], y=serie["iva_total"],
+        x=serie_reciente["periodo"], y=serie_reciente["iva_total"],
         mode="lines+markers", name="IVA histórico",
         line=dict(color="#a855f7", width=2),
+        marker=dict(size=6),
         hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
     ))
 
@@ -98,9 +129,10 @@ def show():
         fig2.add_trace(go.Scatter(
             x=forecast["periodo"], y=forecast["iva_total"],
             mode="lines+markers", name="Forecast IVA",
-            line=dict(color="#a855f7", width=2, dash="dash"),
-            marker=dict(size=10, symbol="diamond"),
-            hovertemplate="<b>%{x}</b><br>$%{y:,.0f}<extra></extra>",
+            line=dict(color="#a855f7", width=3, dash="dash"),
+            marker=dict(size=14, symbol="diamond", color="#a855f7",
+                        line=dict(color="white", width=2)),
+            hovertemplate="<b>%{x} — Forecast</b><br>$%{y:,.0f}<extra></extra>",
         ))
 
     fig2.update_layout(
