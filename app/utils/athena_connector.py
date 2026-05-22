@@ -4,9 +4,10 @@ Utilidades para leer datos de Gold y Silver desde Streamlit.
 """
 
 import os
+
 import awswrangler as wr
 import pandas as pd
-import boto3
+import streamlit as st
 
 S3_BUCKET  = os.environ.get("S3_BUCKET", "cifra-datalake-dev")
 ATHENA_DB  = os.environ.get("GLUE_DATABASE", "cifra_db")
@@ -29,6 +30,7 @@ def query_silver(sql: str) -> pd.DataFrame:
     )
 
 
+@st.cache_data(ttl=3600)
 def get_serie_temporal() -> pd.DataFrame:
     df = read_gold("serie_temporal")
     df["total_facturado"] = df["total_facturado"].round(2)
@@ -37,12 +39,14 @@ def get_serie_temporal() -> pd.DataFrame:
     return df
 
 
+@st.cache_data(ttl=3600)
 def get_top_clientes() -> pd.DataFrame:
     df = read_gold("top_clientes")
     df["total_facturado"] = df["total_facturado"].round(2)
     return df.sort_values("total_facturado", ascending=False)
 
 
+@st.cache_data(ttl=3600)
 def get_distribucion_tipos() -> pd.DataFrame:
     df = read_gold("distribucion_tipos")
     df["total_facturado"] = df["total_facturado"].round(2)
@@ -51,24 +55,21 @@ def get_distribucion_tipos() -> pd.DataFrame:
     return df
 
 
+@st.cache_data(ttl=3600)
 def get_distribucion_pago() -> pd.DataFrame:
     df = read_gold("distribucion_pago")
     df["total_facturado"] = df["total_facturado"].round(2)
     return df
 
 
+@st.cache_data(ttl=3600)
 def get_distribucion_uso() -> pd.DataFrame:
     df = read_gold("distribucion_uso")
     df["total_facturado"] = df["total_facturado"].round(2)
     return df
 
 
-def get_distribucion_uso() -> pd.DataFrame:
-    df = read_gold("distribucion_uso")
-    df["total_facturado"] = df["total_facturado"].round(2)
-    return df
-
-
+@st.cache_data(ttl=3600)
 def get_serie_temporal_completa() -> pd.DataFrame:
     df = read_gold("serie_temporal_completa")
     for col in ["total_facturado", "iva_total", "total_ingresos", "total_egresos"]:
