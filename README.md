@@ -73,6 +73,11 @@ La solución fue desplegada completamente sobre AWS utilizando servicios orienta
 - Data Lake Analytics
 - Machine Learning
 - Visualización interactiva
+---
+
+## Diagrama entidad-relación
+
+![erd](docs/images/ERD.png)
 
 ---
 
